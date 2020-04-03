@@ -2,7 +2,7 @@
 
 ## Etapa 1: Noções iniciais
 
-Este conteúdo está em `nocoes.R`:
+Este conteúdo está em `nocoes.Rmd`:
 
 - [ ] operador de atribuição
 - [ ] reconhecer funçao no R
@@ -18,7 +18,7 @@ Este conteúdo está em `nocoes.R`:
 
 ## Etapa 2: Dplyr
 
-Este conteúdo está em `dplyr.R`
+Este conteúdo está em `dplyr.Rmd`
 
 Obs: começar sem pipe
 
