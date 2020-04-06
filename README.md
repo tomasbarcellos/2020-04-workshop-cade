@@ -4,12 +4,12 @@
 
 Este conteúdo está em `nocoes.Rmd`:
 
-- [ ] operador de atribuição
+- [x] operador de atribuição
 - [ ] reconhecer funçao no R
-  - [ ] vetor (bobinho/talvez rnorm)
+  - [x] vetor (bobinho/talvez rnorm)
   - [ ] apresentar algumas funções primeiro?
-	- [ ] divisão por escalar, reciclagem.
-- [ ] operações logicas de comparação
+	- [x] divisão por escalar, reciclagem.
+- [x] operações logicas de comparação
 
 
 - [ ] como subir o dado de excel? (zona perigosa) (rds)
