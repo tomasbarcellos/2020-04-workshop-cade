@@ -1,0 +1,187 @@
+---
+title: "_dplyr_ - Exercícios"
+author: 
+- João Isidio Freitas Martins
+- Tomás de Siervi Barcellos
+date: '`r format(Sys.Date(), "%Y-%m-%d")`'
+output: 
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      ratio: 16:9
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Este documento requere a instalação dos seguintes pacotes:
+packages <- c('wooldridge','dplyr')
+
+# Retire o comentário da próxima linha, basta remover o # (Ctrl+Shift+C), e execute o código.
+# install.packages(packages)
+
+# Carregando os pacotes no R
+library(wooldridge)
+library(dplyr)
+
+rm(packages)
+```
+
+## Exercícios
+
+## Q.1
+
+O pacote "wooldridge" disponibiliza todos os dataframes do livro. O pacote já deve estar carregado (supondo que a chunk anterior foi executada).
+
+1.1. Guarde no objeto "data" o dataframe "affairs" do pacote "wooldridge".
+
+Não se esqueça de executar a chunk. Existem duas opções para executar a chunk: pressionando a seta verde à direita ou clicando dentro da chunk para depois pressionar Ctrl+Enter.
+```{r}
+# Dica: Aperta Tab depois de ::
+wooldridge::
+  
+## data<- wooldridge::affairs
+```
+
+1.2. Agora, no CONSOLE, vamos executar e verificar os outputs dos seguintes comandos:
+- data
+- tibble(data), aqui você pode verificar exemplos de diferentes classes.
+- View(data)
+
+O Rmarkdown permite que o programador possa alternar entre texto e código. Para isso, vamos aprender primeiro a criar uma chunk.
+
+1.3. No canto superior direito dessa tela (SOURCE) há um uma caixa verde com um "+c". Com o cursor do mouse, clique na próxima linha vazia, então clique em "+c" e selecione a opção "R".
+
+1.4. Outra forma de fazer é usando, na próxima linha, o comando Ctrl+Alt+i.
+
+Voltando ao nosso dataframe. Que variáveis seriam estas? Do que se trata essa dataframe?
+
+5. Dentro da chunk (crie uma nova), dê um help() em affairs. Um dataframe sobre infidelidade.
+```{r}
+## help(affairs)
+```
+
+Agora escreva (chame pelo nome) e execute "data" (o objeto que criado por você) dentro da chunk.
+```{r}
+## data
+```
+
+## Q.2
+
+## Q.2 (a)
+
+Uma forma de conhecer quais são os campos do data frame guardado no objeto data é por meio da função names:
+```{r}
+# names(data)
+```
+
+Sabendo que o primeiro argumento é sempre o objeto data frame, e que os argumentos seguintes são os nomes dos campos, separados por vírgulas. Selecione os campos male, yrsmarr, kids, relig, naffairs:
+```{r}
+# select(data, male, yrsmarr, kids, relig, naffairs)
+```
+
+## Q.2 (b)
+
+Selecione todas as colunas, exceto id.
+```{r}
+# select(data, -id)
+```
+
+Selecione todo os campos entre as variáveis male e kids.
+```{r}
+# select(data, male:kids)
+```
+
+## Q.2 (c)
+
+Selecione os campos que contenham o texto "aff:
+```{r}
+# select(data, contains("aff"))
+```
+
+## Q.2 (d)
+
+Segundo o help(affairs) a variável affair assume "1" se o sujeito(a) teve teve ao menos um "lance" no último ano. Podemos abrasileirar isso daí, vamos renomear essa variávél como "negocim" (apenas imprima o resultado, ou seja, não atribua a nenhum objeto, pois não queremos guardar essa alteração).
+```{r}
+rename(data, negocim = affair)
+```
+
+## Q.3
+
+## Q.3 (a)
+
+Agora vamos julgar as pessoas! Se é pra fofocar só interessa a galera que andou "aprontando" no último ano. Usemos o campo "affair" e filtremos o dataframe pelo valor 1:
+```{r}
+filter(data, affair == 1)
+```
+
+São 150 de 601! Tá porra!
+
+## Q.3 (b)
+
+Será que existem muitos profissionais bem sucedidos com casos de infidelidade? Existe uma escala chamada _Hollingshead_ para isso (Ver: <https://present5.com/presentation/d83d6c68871bf01845f398ec3ed14f7d/image-10.jpg>).
+
+A variável "occup" usa dessa escala para categorizar os sujeitos nas linhas. O valor 1 representa os profissionais mais bem sucedidos. Vamos criar um teste lógico aninhado que nos traga apenas os profissionais de alto escalão que "pularam a cerca".
+```{r}
+# filter(data, affair == 1 & occup == 1)
+```
+
+Façamos o mesmo teste, mas agora de outro modo, separando os testes lógicos por vírgula.
+```{r}
+filter(data, affair == 1, occup == 1)
+```
+
+Como será o resultado disso para os profissionais menos qualificados (valor 7).
+```{r}
+filter(data, affair == 1, occup == 7)
+```
+
+Uau! Ainda bem que sou um ferrado.
+
+## Q.3 (b)
+
+Podemos usar operadores relacionais "<" para filtrar os sujeitos com menos de 18 anos ou menos de 10 anos de escolarização.
+```{r}
+filter(data, age < 18|educ < 10)
+```
+
+Além de permitir que um mesmo problema possa ser resolvido de várias formas, o R permite misturar essas formas de resolver. Copie o comando anterior, adicione uma virgula para um novo argumento, para então filtar o resultado anterior por "affair == 1".
+```{r}
+filter(data, age < 18|educ < 10, affair == 1)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Usar dados da netflix para que os alunos tenham uma experiência mais pessoal.
+<https://medium.com/analytics-vidhya/data-analysis-visualisation-of-netflix-viewing-history-565cefe288fc>
+<https://github.com/charlaporte/Netflix-Data-Analysis/blob/master/R%20code.r>
+
+
+```{r}
+data("coronavirus")
+```
+
+```{r}
+remotes::install_github("joachim-gassen/tidycovid19")
+
+library(tidycovid19)
+
+merged <- download_merged_data(cached = TRUE)
+```
+
+<https://www.kaggle.com/netflix-inc/netflix-prize-data#README>
+<https://piktochart.com/blog/100-data-sets/>

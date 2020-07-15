@@ -1,2 +1,385 @@
-# Aula 1
+---
+title: "_dplyr_"
+author: 
+- João Isidio Freitas Martins
+- Tomás de Siervi Barcellos
+date: '`r format(Sys.Date(), "%Y-%m-%d")`'
+output: 
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      ratio: 16:9
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Este documento requere a instalação dos seguintes pacotes:
+packages <- c('ggplot2', 'dplyr')
+
+# Retire o comentário da próxima linha, basta remover o # (Ctrl+Shift+C), e execute o código.
+# install.packages(packages)
+
+# Carregando os pacotes no R
+library(dplyr)
+
+rm(packages)
+```
+
+# _dplyr_
+
+Esta apresentação inspirou-se no Capítulo 5: _Data transformation_, do livro _R for Data Science_ de _Grolemund & Wickham_, disponível em: <https://r4ds.had.co.nz/index.html>.
+
+---
+
+# _dplyr_?
+
+* O que é: Um __pacote__ (conjunto de funções).
+
+* Propósito: Tornar a linguagem para __manipulação (transformação) de dados__ mais __acessível__ ao usuário comum.
+
+* Como: Sintetiza em __seis funções__ as atividades mais frequêntes da manipulação de dados.
+
+  - Manipulação: forma de HONESTA de produzir informação.
+
+```{r, out.width = "250px", fig.align='right', echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png")
+```
+
+---
+
+# Origem
+
+* O autor do pacote é __Hadley Wickham__ (<https://twitter.com/hadleywickham>).
+  
+  - Também autor da família de pacotes _tidyverse_.
+  - Em certa medida, o _tidyverse_ pode ser entedido quase que como "uma linguagem dentro da linguagem".
+  
+```{r, out.width = "250px", fig.align='right', echo=FALSE}
+knitr::include_graphics("https://upload.wikimedia.org/wikipedia/commons/f/fa/Hadley-wickham2016-02-04.jpg")
+```
+
+---
+
+# Padrão de entrada dos dados
+
+* O que seria _Tidy Data_?
+
+  - Hadley Wickham: _"Tidy Data" as data sets that are arranged such that each variable is a column and each observation (or case) is a row_ (<https://en.wikipedia.org/wiki/Tidy_data>).
+
+|Ano|UF|Firma|Preço|
+|---|---|---|---|
+|2019|GO|A|1.0|
+|2019|GO|B|1.2|
+|2019|DF|A|1.5|
+|2019|DF|B|2.0|
+|2020|GO|A|1.2|
+|2020|GO|B|1.4|
+|2020|DF|A|1.8|
+|2020|DF|B|2.2|
+
+* Vamos nos referir a esta forma de apresentar os dados como _long_.
+
+---
+
+# Padrão de entrada dos dados: _long vs. wide_
+
+* Em oposição ao formato _long_, temos o formato _wide_. Trata-se do mesmo conjunto de dados, mas duas das variáveis agora representam todas as possíveis combinações de preços e empresas.
+
+|Ano|UF|Preço_A|Preço_B|
+|---|---|---|---|
+|2019|GO|1.0|1.2|
+|2019|DF|1.5|2.0|
+|2020|GO|1.2|1.4|
+|2020|DF|1.8|2.2|
+
+* Cada coluna no _long_ representa apenas uma variável!
+
+* Deve-se sempre prestigiar o formato _long_, ele é a forma padrão de organização dos dados.
+
+---
+
+# Padrão de entrada dos dados: _data cleaning_
+
+_Tidy Data_ não deve ser confundido com _data cleaning_ que "é o processo de detecção e correção (ou remoção) de registros corrompidos ou imprecisos de um conjunto de registros, tabela ou banco de dados e refere-se à identificação de partes incompletas, incorretas, imprecisas ou irrelevantes dos dados e, em seguida, da substituição, modificação ou exclusão dessas informações" (<https://en.wikipedia.org/wiki/Data_cleansing>).
+
+---
+
+# _tibble_
+
+* Formato de dataframe próprio do _dplyr_
+  - Mostra apenas linhas e colunas que cabem na tela
+  - Traz classes:
+      - int (integers): inteiros
+      - dbl (doubles): números reais
+      - chr (character): texto
+      - dttm (date-times): Data e hora
+      - lgl (logical): TRUE ou FALSE
+      - fctr (factors): variáveis categóricas (nominais/ordinais)
+      - date (dates): data
+  - Mais eficiente para o _dplyr_ processar
+
+* Q1!
+
+```{r, out.width = "250px", fig.align='right', echo=FALSE}
+knitr::include_graphics("https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/tibble.png")
+```
+
+---
+
+# Os Cinco Furiosos
+
+```{r, out.width = "500px", fig.align='center', echo=FALSE}
+knitr::include_graphics("F5.jpg")
+```
+
+
+
+--
+Achou que não ia ter referência de Kung Fu Panda?
+
+---
+
+# Os Cinco Furiosos
+
+```{r, out.width = "750px", fig.align='center', echo=FALSE}
+knitr::include_graphics("https://d3q93wnyp4lkf8.cloudfront.net/revista/post_images/6527/8e578b8cc8c785e8f4939cc163fda8bafe6a106a.jpg?1517506858")
+```
+
+---
+
+# Os Cinco Furiosos
+
+```{r, out.width = "500px", fig.align='center', echo=FALSE}
+knitr::include_graphics("F5.jpg")
+```
+
+--
+* __select()__ - seleciona colunas (variáveis).
+
+--
+* __filter()__ - filtra linhas (observações).
+
+--
+* __mutate()__ - cria variáveis com base nas preexistentes.
+
+--
+* __arrange()__ - ordena as linhas.
+
+--
+* __summarise()__ - calcula agregações (resume muitos valores em um!).
+
+--
+* __group_by()__ - quebra os dados em grupos (indexa).
+
+--
+
+Uai?! Seis!
+
+--
+Sim, o panda é o Dragão Guerreiro.
+
+---
+
+# Os Cinco Furiosos
+
+Todos estes verbos (funções) funcionam de forma similar:
+  1. O primeiro argumento é sempre um _data frame_.
+  2. Os argumentos subsequentes descrevem o que fazer com o _data frame_.
+    - Usa-se os nomes das variáveis sem aspas!
+  3. Resulta em um novo data frame.
+
+Essas funções permitirão que o usuário encadeie várias ações simples, de modo a atingir um resultado complexo.
+
+---
+
+# select()
+
+O primeiro furioso é o select(). Ele serve para selecionar campos (colunas, variáveis) de um _data frame_.
+
+Alguns campos podem se tornar inúteis com o tratamento ou mesmo não servirem ao objetivo da pesquisa. Seu descarte pode, em algumas situações, dar alivio a RAM.
+
+Pode-se selecionar as variáveis por nome. Basta escrever os nomes dos campos que se deseja manter, separados por vírgula (lembra que o primeiro argumento dessas funções é sempre o dataframe).
+```{r}
+# select(dados, var_1, var_2,...,var_n)
+```
+
+Q.2 (a)!
+
+---
+
+# select(): Conveniências
+
+Existem muitas outras formas de selecionar campos, _menos relevantes aqui_.
+
+Pode-se selecionar todos os campos, com exceção de algum:
+```{r}
+# select(dados, -var_k)
+```
+
+Pode-se selecionar o conjunto de campos entre um campo e outro:
+```{r}
+# select(dados, var_3:var_7)
+```
+
+Q.2 (b)!
+
+---
+
+# select(): Conveniências
+
+Existem outras funções auxiliares como: 
+  - starts_with()
+  - ends_with()
+  - contains()
+  - matches()
+  - num_range()
+
+```{r}
+# select(dados, starts_with("var_"))
+```
+  
+Q.2 (c)!
+
+---
+
+# rename()
+
+Não tão importante quanto nossos furiosos, mas ainda sim um companheiro conveniente é o rename().
+
+Muitas vezes os campos estão nomeados de forma pouco intuitiva, o que força o programador (aqui entendido como o zé ruela que está mechendo no dado) a ter de toda hora recorrer a função names().
+
+Existem outras formas bem mais comuns de alterar nomes, mas essa é uma função bem conveniente.
+```{r}
+# rename(dados, nome_novo = nome_antigo_e_ruim_de_lembrar)
+```
+
+Q.2 (d)!
+
+---
+
+# filter()
+
+O segundo furioso é o filter()! Que usa das informações em um campo para determinar as linhas que devem permanecer (ou serem excluídas) do dataframe.
+
+__Aqui é hora de lembrar dos testes lógicos apresentados pelo Tómas!__
+
+Digamos, por exemplo, que a "var_1" do nosso _data frame_ imaginário possa assumir várias categorias que vão de "cat_1" à "cat_10" (Ex: UFs com 27 categorias).
+
+Para filtar as linhas do _data frame_ que pertecem à "cat_3", inserimos o seguinte teste lógico com o campo "var_1":
+```{r}
+# filter(dados, var_1 == "cat_3")
+```
+
+Q.3! (a)
+
+---
+
+# filter()
+
+É possível filtrar um data frame por mais de uma característica. A primeira forma é criando um teste lógico aninhado por meio de & (E/AND):
+```{r}
+# filter(dados, var_1 == "cat_3" & var_n == 5)
+```
+
+A outra é separando estes testes por vírgula.
+```{r}
+# filter(dados, var_1 == "cat_3", var_n == 5)
+```
+
+Q.3! (b)
+
+---
+
+# filter()
+
+Como o segundo argumento é um teste lógico o céu é o limite. Podemos usar, por exemplo, | (OU/OR) na hora de formar as proposições.
+```{r}
+# filter(dados, var_1 == "cat_3" | var_n == 5)
+```
+
+Ou seja, serão selecionadas as linhas cujo o valor em "var_1" seja "cat_1", ou que o valor em "var_n" seja 5, ou ambos (não se trata de um ou exclusivo - xor).
+
+Q.3! (c)
+
+---
+
+# filter()
+
+Ver o doc...
+
+---
+
+# mutate()
+
+---
+
+# group_by()
+
+which changes the scope of each function from operating on the entire dataset to operating on it group-by-group.
+
+---
+
+# summarise()
+Collapse many values down to a single summary
+
+---
+
+# arrange()
+
+---
+
+Até agora ignoramos a existencia do operador de atribuição,
+
+                
+- split, apply, combine no osso.
+- mutate()
+                - fazer uma coluna de logico e usar como filtro
+- group_by() e summarise()
+ 
+                - n(): Conta a quantidade de valores do vetor
+                - n_distinct(): Conta a quantidade de valores únicos do valores
+ 
+- arrange() e desc()
+ 
+- pipe (aplicação)
+
+---
+
+https://r4ds.had.co.nz/transform.html
+
+parei no 5.2!!
+
+it is rare that you get the data in exactly the right form you need
+
+use ggplot2 to help us understand the data
+
+
+
+
+* O dplyr é "uma gramática de manipulação de dados".
+
+---
+
+## summarise
+
+função de n para 1...
+
+## quando for apresentar a magrit
+
+* A análise de dado começa pelo dado! Então faz todo sentido que o fluxo de programação se inicie do dado para depois seguir-se aos tratamentos.
+  - Programação funcional vs. Programação orientada a objeto
+  - Ao final do workshop serão dados exemplos práticos destes conceitos.
+
+```{r}
+# data("coronavirus")
+# 
+# names(coronavirus)
+# 
+# coronavirus %>% 
+#   filter(Country.Region == "Brazil")
+```
 
